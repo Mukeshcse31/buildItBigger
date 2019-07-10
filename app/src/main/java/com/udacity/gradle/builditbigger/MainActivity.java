@@ -1,11 +1,20 @@
 package com.udacity.gradle.builditbigger;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
+import com.google.app.androidjokes.JokeActivity;
+import com.google.app.javajokes.Jokes;
+
+//import com.google.android.gms.ads.MobileAds;
+//import com.google.android.gms.ads.initialization.InitializationStatus;
+//import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+//import com.google.android.gms.ads.MobileAds;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -14,6 +23,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+//        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+//            @Override
+//            public void onInitializationComplete(InitializationStatus initializationStatus) {
+//            }
+//        });
     }
 
 
@@ -40,8 +54,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void tellJoke(View view) {
-        Toast.makeText(this, "derp", Toast.LENGTH_SHORT).show();
+
+//        MainActivityFragment fragment = new MainActivityFragment();
+//        getSupportFragmentManager().beginTransaction()
+//                .replace(R.id.jokesLayout, fragment)
+//                .commit();
+
+        TextView jo = findViewById(R.id.instructions_text_view);
+//        jo.setText(getJokes());
+//        Toast.makeText(this, "derp", Toast.LENGTH_SHORT).show();
+
+        Intent intent = new Intent(MainActivity.this, JokeActivity.class);
+        intent.putExtra("joke", getJokes());
+        startActivity(intent);
     }
 
+public String getJokes(){
 
+    Jokes jokes = new Jokes();
+    String joke = jokes.getJokes();
+
+    return joke;
+}
 }

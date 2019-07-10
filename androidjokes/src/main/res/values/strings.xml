@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">androidJokes</string>
+    <string name="error_message">An Error occurred</string>
+</resources>
