@@ -1,8 +1,11 @@
 package com.udacity.gradle.builditbigger;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +18,8 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.app.androidjokes.JokeActivity;
 import com.google.app.javajokes.Jokes;
+
+import java.util.concurrent.ExecutionException;
 
 //import com.google.android.gms.ads.MobileAds;
 //import com.google.android.gms.ads.initialization.InitializationStatus;
@@ -32,31 +37,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+    MobileAds.initialize(this,
+            "ca-app-pub-3940256099942544~3347511713");
 
-        MobileAds.initialize(this,
-                "ca-app-pub-3940256099942544~3347511713");
+    mInterstitialAd = new InterstitialAd(this);
+    mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
 
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
         mInterstitialAd.loadAd(new AdRequest.Builder().build());
         mInterstitialAd.setAdListener(new AdListener() {
             @Override
             public void onAdClosed() {
-
+//
                 Intent intent = new Intent(MainActivity.this, JokeActivity.class);
                 intent.putExtra("joke", getJokes());
                 startActivity(intent);
-                // Load the next interstitial.
-//                mInterstitialAd.loadAd(new AdRequest.Builder().build());
             }
 
         });
-
-//        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-//            @Override
-//            public void onInitializationComplete(InitializationStatus initializationStatus) {
-//            }
-//        });
     }
 
 
@@ -89,16 +86,31 @@ public class MainActivity extends AppCompatActivity {
             mInterstitialAd.show();
         }
 
-//        TextView jo = findViewById(R.id.instructions_text_view);
-
     }
 
 
 public String getJokes(){
 
-    Jokes jokes = new Jokes();
-    String joke = jokes.getJokes();
+//    Jokes jokes = new Jokes();
+//    String joke = jokes.getJokes();
+//    return joke;
 
+    String joke = "";
+    try {
+        joke = new EndPointsAsyncTask().execute(new Pair<Context, String>(this, "hi")).get();
+
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    } catch (ExecutionException e) {
+        e.printStackTrace();
+    }
     return joke;
 }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+    }
 }
