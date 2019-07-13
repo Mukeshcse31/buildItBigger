@@ -11,14 +11,12 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.net.URL;
 import java.util.ArrayList;
 
 public class JokeActivity extends AppCompatActivity {
 
     TextView joke_tv;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +25,7 @@ public class JokeActivity extends AppCompatActivity {
         joke_tv = findViewById(R.id.joke);
         String joke = getIntent().getStringExtra("joke");
         joke_tv.setText(joke);
+
     }
 
     @Override

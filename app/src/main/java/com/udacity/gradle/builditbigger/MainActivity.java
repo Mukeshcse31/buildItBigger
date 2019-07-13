@@ -8,6 +8,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 import com.google.app.androidjokes.JokeActivity;
 import com.google.app.javajokes.Jokes;
 
@@ -19,10 +24,34 @@ import com.google.app.javajokes.Jokes;
 
 public class MainActivity extends AppCompatActivity {
 
+
+    private InterstitialAd mInterstitialAd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        MobileAds.initialize(this,
+                "ca-app-pub-3940256099942544~3347511713");
+
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+
+                Intent intent = new Intent(MainActivity.this, JokeActivity.class);
+                intent.putExtra("joke", getJokes());
+                startActivity(intent);
+                // Load the next interstitial.
+//                mInterstitialAd.loadAd(new AdRequest.Builder().build());
+            }
+
+        });
+
 //        MobileAds.initialize(this, new OnInitializationCompleteListener() {
 //            @Override
 //            public void onInitializationComplete(InitializationStatus initializationStatus) {
@@ -55,19 +84,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void tellJoke(View view) {
 
-//        MainActivityFragment fragment = new MainActivityFragment();
-//        getSupportFragmentManager().beginTransaction()
-//                .replace(R.id.jokesLayout, fragment)
-//                .commit();
 
-        TextView jo = findViewById(R.id.instructions_text_view);
-//        jo.setText(getJokes());
-//        Toast.makeText(this, "derp", Toast.LENGTH_SHORT).show();
+        if (mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        }
 
-        Intent intent = new Intent(MainActivity.this, JokeActivity.class);
-        intent.putExtra("joke", getJokes());
-        startActivity(intent);
+//        TextView jo = findViewById(R.id.instructions_text_view);
+
     }
+
 
 public String getJokes(){
 
