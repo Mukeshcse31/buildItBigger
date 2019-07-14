@@ -3,21 +3,19 @@ package com.udacity.gradle.builditbigger;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.app.androidjokes.JokeActivity;
-import com.google.app.javajokes.Jokes;
+import com.udacity.gradle.builditbigger.IdlingResource.EspressoIdlingResource;
 
 import java.util.concurrent.ExecutionException;
 
@@ -47,13 +45,15 @@ public class MainActivity extends AppCompatActivity {
         mInterstitialAd.setAdListener(new AdListener() {
             @Override
             public void onAdClosed() {
-//
+                EspressoIdlingResource.increment();
                 Intent intent = new Intent(MainActivity.this, JokeActivity.class);
                 intent.putExtra("joke", getJokes());
                 startActivity(intent);
+                EspressoIdlingResource.decrement();
             }
 
         });
+//        EspressoIdlingResource.increment();
     }
 
 
@@ -81,11 +81,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void tellJoke(View view) {
 
-
+        EspressoIdlingResource.increment();
         if (mInterstitialAd.isLoaded()) {
             mInterstitialAd.show();
         }
-
+        EspressoIdlingResource.decrement();
     }
 
 

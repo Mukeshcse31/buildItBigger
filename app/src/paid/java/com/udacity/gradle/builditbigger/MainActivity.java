@@ -3,14 +3,15 @@ package com.udacity.gradle.builditbigger;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.app.androidjokes.JokeActivity;
+import com.udacity.gradle.builditbigger.IdlingResource.EspressoIdlingResource;
 
 import java.util.concurrent.ExecutionException;
 
@@ -54,12 +55,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void tellJoke(View view) {
-//
+        EspressoIdlingResource.increment();
         Intent intent = new Intent(MainActivity.this, JokeActivity.class);
         intent.putExtra("joke", getJokes());
         startActivity(intent);
 
-
+        EspressoIdlingResource.decrement();
     }
 
 
