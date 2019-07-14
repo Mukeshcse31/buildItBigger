@@ -7,6 +7,9 @@ import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,7 +18,6 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.app.androidjokes.JokeActivity;
-import com.udacity.gradle.builditbigger.IdlingResource.EspressoIdlingResource;
 
 import java.util.concurrent.ExecutionException;
 
@@ -27,13 +29,21 @@ import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
-
+    public ProgressBar mProgressBar;
+    private TextView mTextView;
+    private Button mButton;
     private InterstitialAd mInterstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mProgressBar = findViewById(R.id.pb_loading_indicator);
+        mTextView = findViewById(R.id.instructions_text_view);
+        mButton = findViewById(R.id.tellJoke_bn);
+
+        mProgressBar.setVisibility(View.INVISIBLE);
 
     MobileAds.initialize(this,
             "ca-app-pub-3940256099942544~3347511713");
@@ -45,15 +55,12 @@ public class MainActivity extends AppCompatActivity {
         mInterstitialAd.setAdListener(new AdListener() {
             @Override
             public void onAdClosed() {
-                EspressoIdlingResource.increment();
                 Intent intent = new Intent(MainActivity.this, JokeActivity.class);
                 intent.putExtra("joke", getJokes());
                 startActivity(intent);
-                EspressoIdlingResource.decrement();
             }
 
         });
-//        EspressoIdlingResource.increment();
     }
 
 
@@ -80,20 +87,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void tellJoke(View view) {
+        mProgressBar.setVisibility(View.VISIBLE);
+        mTextView.setVisibility(View.INVISIBLE);
+        mButton.setVisibility(View.INVISIBLE);
 
-        EspressoIdlingResource.increment();
         if (mInterstitialAd.isLoaded()) {
             mInterstitialAd.show();
         }
-        EspressoIdlingResource.decrement();
     }
 
 
 public String getJokes(){
-
-//    Jokes jokes = new Jokes();
-//    String joke = jokes.getJokes();
-//    return joke;
 
     String joke = "";
     try {
@@ -112,5 +116,9 @@ public String getJokes(){
     public void onResume() {
         super.onResume();
         mInterstitialAd.loadAd(new AdRequest.Builder().build());
+        mProgressBar.setVisibility(View.INVISIBLE);
+        mTextView.setVisibility(View.VISIBLE);
+        mButton.setVisibility(View.VISIBLE);
+
     }
 }

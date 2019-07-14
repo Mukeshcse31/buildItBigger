@@ -7,6 +7,9 @@ import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,12 +26,18 @@ import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
-
+public ProgressBar mProgressBar;
+private TextView mTextView;
+private Button mButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+mProgressBar = findViewById(R.id.pb_loading_indicator);
+mTextView = findViewById(R.id.instructions_text_view);
+mButton = findViewById(R.id.tellJoke_bn);
 
+mProgressBar.setVisibility(View.INVISIBLE);
     }
 
 
@@ -55,6 +64,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void tellJoke(View view) {
+        mProgressBar.setVisibility(View.VISIBLE);
+        mTextView.setVisibility(View.INVISIBLE);
+        mButton.setVisibility(View.INVISIBLE);
+
         EspressoIdlingResource.increment();
         Intent intent = new Intent(MainActivity.this, JokeActivity.class);
         intent.putExtra("joke", getJokes());
@@ -86,5 +99,9 @@ public String getJokes(){
     @Override
     public void onResume() {
         super.onResume();
+        mProgressBar.setVisibility(View.INVISIBLE);
+        mTextView.setVisibility(View.VISIBLE);
+        mButton.setVisibility(View.VISIBLE);
+
     }
 }
