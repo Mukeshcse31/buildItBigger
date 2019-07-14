@@ -2,8 +2,6 @@ package com.udacity.gradle.builditbigger;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Pair;
-import android.widget.Toast;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
@@ -13,14 +11,21 @@ import com.udacity.gradle.builditbigger.backend.myApi.MyApi;
 
 import java.io.IOException;
 
-public class EndPointsAsyncTask extends AsyncTask<Pair<Context, String>, Void, String> {
+public class EndPointsAsyncTask extends AsyncTask<Void, Void, String> {
         private static MyApi myApiService = null;
         private Context context;
 
+    private static final String TAG = EndpointsAsyncTaskInterface.class.getSimpleName();
+    private EndpointsAsyncTaskInterface listener;
+
+    public EndPointsAsyncTask(EndpointsAsyncTaskInterface listener) {
+        this.listener = listener;
+    }
+
         @Override
-        protected String doInBackground(Pair<Context, String>... params) {
-            context = params[0].first;
-            String devServer = context.getString(R.string.devServer);
+        protected String doInBackground(Void... params) {
+            String devServer = "10.0.2.2";
+//            String devServer = context.getString(R.string.devServer);
             if(myApiService == null) {  // Only do this once
                 MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(),
                         new AndroidJsonFactory(), null)
@@ -40,10 +45,10 @@ public class EndPointsAsyncTask extends AsyncTask<Pair<Context, String>, Void, S
             }
 
 
-            String name = params[0].second;
+//            String name = params[0].second;
 
             try {
-                return myApiService.sayHi(name).execute().getData();
+                return myApiService.sayHi("hi").execute().getData();
             } catch (IOException e) {
                 return e.getMessage();
             }
@@ -52,7 +57,7 @@ public class EndPointsAsyncTask extends AsyncTask<Pair<Context, String>, Void, S
         @Override
         protected void onPostExecute(String result) {
 super.onPostExecute(result);
-
+            listener.returnJokeData(result);
 //            Toast.makeText(context, result, Toast.LENGTH_LONG).show();
         }
     }

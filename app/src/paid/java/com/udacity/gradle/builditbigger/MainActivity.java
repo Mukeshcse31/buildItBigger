@@ -1,9 +1,8 @@
 package com.udacity.gradle.builditbigger;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Pair;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,15 +15,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.app.androidjokes.JokeActivity;
 import com.udacity.gradle.builditbigger.IdlingResource.EspressoIdlingResource;
 
-import java.util.concurrent.ExecutionException;
-
 //import com.google.android.gms.ads.MobileAds;
 //import com.google.android.gms.ads.initialization.InitializationStatus;
 //import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 //import com.google.android.gms.ads.MobileAds;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements EndpointsAsyncTaskInterface{
 
 public ProgressBar mProgressBar;
 private TextView mTextView;
@@ -67,34 +64,22 @@ mProgressBar.setVisibility(View.INVISIBLE);
         mProgressBar.setVisibility(View.VISIBLE);
         mTextView.setVisibility(View.INVISIBLE);
         mButton.setVisibility(View.INVISIBLE);
+        EndPointsAsyncTask myTask = new EndPointsAsyncTask(this);
+        myTask.execute();
+    }
+
+    @Override
+    public void returnJokeData(String result)
+    {
+        Log.i("result", result);
 
         EspressoIdlingResource.increment();
         Intent intent = new Intent(MainActivity.this, JokeActivity.class);
-        intent.putExtra("joke", getJokes());
+        intent.putExtra("joke", result);
         startActivity(intent);
 
         EspressoIdlingResource.decrement();
     }
-
-
-public String getJokes(){
-
-//    Jokes jokes = new Jokes();
-//    String joke = jokes.getJokes();
-//    return joke;
-
-    String joke = "";
-    try {
-        joke = new EndPointsAsyncTask().execute(new Pair<Context, String>(this, "hi")).get();
-//joke = "paid joke";
-    } catch (InterruptedException e) {
-        e.printStackTrace();
-    } catch (ExecutionException e) {
-        e.printStackTrace();
-    }
-    return joke;
-}
-
 
     @Override
     public void onResume() {
